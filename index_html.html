@@ -1,0 +1,2423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTPC – EMD Daily Work Report System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --blue: #003366;
+            --blue2: #0055A5;
+            --blue3: #E8F1FB;
+            --org: #E8620A;
+            --org2: #FF7A25;
+            --bg: #EEF3FA;
+            --white: #fff;
+            --text: #1C2B3A;
+            --light: #5E728A;
+            --bdr: #CDD9EC;
+            --bdr2: #B0C4DE;
+            --green: #198754;
+            --yellow: #D97706;
+            --red: #DC2626;
+            --sh: 0 2px 14px rgba(0, 51, 102, .10);
+            --sh2: 0 6px 28px rgba(0, 51, 102, .18);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        .hdr {
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+            color: #fff;
+            height: 66px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            box-shadow: 0 3px 20px rgba(0, 0, 0, .24);
+        }
+        .hdr-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .hdr-logo {
+            width: 46px;
+            height: 46px;
+            background: var(--org);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: #fff;
+            line-height: 1.2;
+            text-align: center;
+        }
+        .hdr-title h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: .4px;
+        }
+        .hdr-title p {
+            font-size: 11.5px;
+            opacity: .72;
+            margin-top: 1px;
+        }
+        .hdr-right {
+            font-size: 12px;
+            opacity: .8;
+            text-align: right;
+            line-height: 1.65;
+        }
+
+        /* NAV */
+        .nav {
+            background: var(--blue);
+            display: flex;
+            padding: 0 28px;
+            gap: 2px;
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+        }
+        .ntab {
+            padding: 13px 24px;
+            color: rgba(255, 255, 255, .6);
+            cursor: pointer;
+            font-size: 13.5px;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+        }
+        .ntab:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .07);
+        }
+        .ntab.on {
+            color: var(--org2);
+            border-bottom-color: var(--org2);
+            background: rgba(255, 255, 255, .05);
+        }
+
+        /* WRAP */
+        .wrap {
+            width: 100%;
+            padding: 26px 32px;
+        }
+
+        /* PAGES */
+        .pg {
+            display: none;
+        }
+        .pg.on {
+            display: block;
+        }
+
+        /* PAGE HEADER */
+        .ph {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .ph-t h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 27px;
+            font-weight: 700;
+            color: var(--blue);
+        }
+        .ph-t p {
+            font-size: 13px;
+            color: var(--light);
+            margin-top: 2px;
+        }
+
+        /* STATS */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+        .scard {
+            background: #fff;
+            border-radius: 14px;
+            padding: 20px 22px;
+            box-shadow: var(--sh);
+            border-top: 4px solid var(--org);
+            transition: transform .2s;
+        }
+        .scard:hover {
+            transform: translateY(-2px);
+        }
+        .scard.b {
+            border-top-color: var(--blue);
+        }
+        .scard.g {
+            border-top-color: var(--green);
+        }
+        .scard.y {
+            border-top-color: var(--yellow);
+        }
+        .sc-lbl {
+            font-size: 11.5px;
+            color: var(--light);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+        .sc-val {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 38px;
+            font-weight: 700;
+            color: var(--blue);
+            line-height: 1.1;
+            margin-top: 4px;
+        }
+
+        /* SEARCH ROW */
+        .dash-search {
+            background: #fff;
+            border-radius: 13px;
+            padding: 16px 22px;
+            box-shadow: var(--sh);
+            margin-bottom: 22px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .dash-search label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--light);
+            white-space: nowrap;
+        }
+        .ds-info {
+            margin-left: auto;
+            font-size: 12.5px;
+            color: var(--light);
+        }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 18px;
+            border-radius: 9px;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all .2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-blue {
+            background: var(--blue);
+            color: #fff;
+        }
+        .btn-blue:hover {
+            background: var(--blue2);
+            box-shadow: 0 4px 14px rgba(0, 51, 102, .28);
+            transform: translateY(-1px);
+        }
+        .btn-org {
+            background: var(--org);
+            color: #fff;
+        }
+        .btn-org:hover {
+            background: var(--org2);
+            box-shadow: 0 4px 14px rgba(232, 98, 10, .32);
+            transform: translateY(-1px);
+        }
+        .btn-out {
+            background: transparent;
+            border: 1.5px solid var(--bdr);
+            color: var(--text);
+        }
+        .btn-out:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+        .btn-del {
+            background: transparent;
+            border: 1.5px solid #FECACA;
+            color: var(--red);
+        }
+        .btn-del:hover {
+            background: var(--red);
+            color: #fff;
+            border-color: var(--red);
+        }
+        .btn-wht {
+            background: rgba(255, 255, 255, .15);
+            border: 1px solid rgba(255, 255, 255, .35);
+            color: #fff;
+        }
+        .btn-wht:hover {
+            background: rgba(255, 255, 255, .28);
+        }
+        .btn-grn {
+            background: var(--green);
+            color: #fff;
+        }
+        .btn-grn:hover {
+            background: #15724A;
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* DAY CARD */
+        .dc {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: var(--sh);
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid var(--bdr);
+            transition: box-shadow .2s;
+        }
+        .dc:hover {
+            box-shadow: var(--sh2);
+        }
+        .dc-head {
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+            color: #fff;
+            padding: 15px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .dc-date {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 21px;
+            font-weight: 700;
+        }
+        .dc-meta {
+            font-size: 12px;
+            opacity: .8;
+            margin-top: 3px;
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .dc-acts {
+            display: flex;
+            gap: 7px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .dc-body {
+            padding: 0 18px 18px;
+            overflow-x: auto;
+        }
+
+        /* TABLE */
+        .rt {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+            table-layout: auto;
+        }
+        .rt th {
+            background: var(--blue3);
+            padding: 10px 13px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--blue);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            border-bottom: 2px solid var(--bdr2);
+            white-space: nowrap;
+        }
+        .rt td {
+            padding: 11px 13px;
+            border-bottom: 1px solid var(--bdr);
+            vertical-align: top;
+            line-height: 1.55;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        .rt tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .rt tbody tr:hover td {
+            background: #F8FAFE;
+        }
+
+        /* STATUS */
+        .sb {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .sb-c {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        .sb-i {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+        .sb-p {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+        .sb-x {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        /* SNO */
+        .sno {
+            background: var(--blue);
+            color: #fff;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* FORM */
+        .fc {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: var(--sh);
+            padding: 26px 28px;
+            margin-bottom: 22px;
+        }
+        .fc-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--blue);
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--bdr);
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+        .frow {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .frow.c2 {
+            grid-template-columns: 1fr 1fr;
+        }
+        .frow.c3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+        .frow.c4 {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
+        .fg {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .fg label {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+        .fg label .req {
+            color: var(--org);
+            margin-left: 1px;
+        }
+        .fc-ctrl {
+            border: 1.5px solid var(--bdr);
+            border-radius: 9px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            outline: none;
+            transition: all .2s;
+            width: 100%;
+            background: #fff;
+        }
+        .fc-ctrl:focus {
+            border-color: var(--blue2);
+            box-shadow: 0 0 0 3px rgba(0, 85, 165, .10);
+        }
+        textarea.fc-ctrl {
+            resize: vertical;
+            min-height: 78px;
+        }
+
+        /* TASK ENTRY */
+        .te {
+            border: 1.5px solid var(--bdr);
+            border-radius: 13px;
+            padding: 20px;
+            margin-bottom: 16px;
+            background: #FAFCFF;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .te:hover {
+            border-color: var(--blue2);
+            box-shadow: 0 2px 12px rgba(0, 85, 165, .08);
+        }
+        .te-hdr {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .te-hdr-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tnum {
+            background: var(--org);
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .tlbl {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--blue);
+        }
+        .atbtn {
+            width: 100%;
+            padding: 13px;
+            border: 2px dashed var(--blue2);
+            border-radius: 11px;
+            background: transparent;
+            color: var(--blue2);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+        }
+        .atbtn:hover {
+            background: rgba(0, 85, 165, .05);
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        /* MONTHLY FOLDERS */
+        .mf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .mfolder {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: var(--sh);
+            border: 1px solid var(--bdr);
+            cursor: pointer;
+            transition: box-shadow .2s, transform .15s;
+            overflow: hidden;
+        }
+        .mfolder:hover {
+            box-shadow: var(--sh2);
+            transform: translateY(-2px);
+        }
+        .mf-top {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .mf-icon {
+            font-size: 38px;
+            line-height: 1;
+            flex-shrink: 0;
+            transition: transform .25s;
+        }
+        .mfolder.open .mf-icon {
+            transform: scale(1.1);
+        }
+        .mf-info {}
+        .mf-month {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--blue);
+        }
+        .mf-sub {
+            font-size: 12px;
+            color: var(--light);
+            margin-top: 3px;
+            display: flex;
+            gap: 12px;
+        }
+        .mf-sub span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .mf-arrow {
+            margin-left: auto;
+            font-size: 18px;
+            color: var(--light);
+            transition: transform .25s;
+            flex-shrink: 0;
+        }
+        .mfolder.open .mf-arrow {
+            transform: rotate(90deg);
+        }
+        .mf-bar {
+            height: 4px;
+            background: linear-gradient(90deg, var(--org) 0%, var(--org2) 100%);
+        }
+        .mf-body {
+            display: none;
+            border-top: 1px solid var(--bdr);
+        }
+        .mfolder.open .mf-body {
+            display: block;
+        }
+        .mf-days-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .mf-days-table th {
+            background: var(--blue3);
+            padding: 9px 14px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--blue);
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+        .mf-days-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--bdr);
+            vertical-align: middle;
+        }
+        .mf-days-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .mf-days-table tbody tr:hover td {
+            background: #F8FAFE;
+        }
+        .mf-acts {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .mf-head-acts {
+            padding: 10px 16px;
+            border-top: 1px solid var(--bdr);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #FAFCFF;
+        }
+
+        /* EMPTY */
+        .empty {
+            text-align: center;
+            padding: 64px 20px;
+            color: var(--light);
+        }
+        .empty-ico {
+            font-size: 72px;
+            margin-bottom: 18px;
+            opacity: .35;
+        }
+        .empty h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .empty p {
+            font-size: 14px;
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            background: var(--green);
+            color: #fff;
+            padding: 13px 22px;
+            border-radius: 11px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .15);
+            z-index: 9999;
+            transform: translateX(140%);
+            transition: transform .3s ease;
+        }
+        .toast.on {
+            transform: translateX(0);
+        }
+        .toast.err {
+            background: var(--red);
+        }
+
+        .dc.search-match {
+            border: 2px solid var(--org);
+            box-shadow: 0 0 0 3px rgba(232, 98, 10, .15);
+        }
+
+        /* PRINT */
+        @media print {
+            body {
+                background: #fff;
+            }
+            .hdr,
+            .nav,
+            .no-print,
+            .ph,
+            .dash-search,
+            .stats {
+                display: none !important;
+            }
+            .wrap {
+                padding: 0;
+            }
+            .dc {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                break-inside: avoid;
+                margin-bottom: 14px;
+            }
+        }
+
+        @media(max-width:900px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .frow.c3,
+            .frow.c4 {
+                grid-template-columns: 1fr 1fr;
+            }
+            .frow.c2 {
+                grid-template-columns: 1fr;
+            }
+            .wrap {
+                padding: 18px 14px;
+            }
+        }
+        @media(max-width:600px) {
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            .frow.c3,
+            .frow.c4,
+            .frow.c2 {
+                grid-template-columns: 1fr;
+            }
+            .mf-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── GOOGLE SHEETS SYNC ── */
+        .gs-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.55);
+            z-index: 5000;
+            align-items: center;
+            justify-content: center;
+        }
+        .gs-modal-overlay.on { display: flex; }
+        .gs-modal {
+            background: #fff;
+            border-radius: 18px;
+            padding: 32px 36px;
+            width: 500px;
+            max-width: 96vw;
+            box-shadow: 0 20px 60px rgba(0,0,51,.22);
+            position: relative;
+        }
+        .gs-modal h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--blue);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .gs-modal p.gs-sub {
+            font-size: 13px;
+            color: var(--light);
+            margin-bottom: 20px;
+        }
+        .gs-field { margin-bottom: 16px; }
+        .gs-field label {
+            display: block;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            margin-bottom: 6px;
+        }
+        .gs-field input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--bdr);
+            border-radius: 9px;
+            font-size: 13.5px;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            outline: none;
+            transition: border-color .2s;
+        }
+        .gs-field input:focus { border-color: var(--blue2); box-shadow: 0 0 0 3px rgba(0,85,165,.1); }
+        .gs-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; flex-wrap: wrap; }
+        .gs-status {
+            margin-top: 14px;
+            padding: 10px 14px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 500;
+            display: none;
+        }
+        .gs-status.ok { background: #D1FAE5; color: #065F46; display: block; }
+        .gs-status.err { background: #FEE2E2; color: #991B1B; display: block; }
+        .gs-status.inf { background: #DBEAFE; color: #1E40AF; display: block; }
+        .sync-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: rgba(255,255,255,.65);
+            margin-right: 12px;
+        }
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6B7280;
+        }
+        .sync-dot.synced { background: #34D399; }
+        .sync-dot.syncing { background: #FBBF24; animation: pulse .8s infinite; }
+        .sync-dot.error { background: #F87171; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+        .btn-gs {
+            background: #1a7f37;
+            color: #fff;
+            border: none;
+        }
+        .btn-gs:hover { background: #166d2f; box-shadow: 0 4px 14px rgba(26,127,55,.3); transform: translateY(-1px); }
+        .gs-steps {
+            background: var(--blue3);
+            border-radius: 11px;
+            padding: 14px 18px;
+            margin-bottom: 18px;
+            font-size: 12.5px;
+            color: var(--text);
+            line-height: 1.8;
+        }
+        .gs-steps strong { color: var(--blue); }
+    </style>
+</head>
+<body>
+
+    <div class="hdr">
+        <div class="hdr-left">
+            <div class="hdr-logo">NTPC<br>EMD</div>
+            <div class="hdr-title">
+                <h1>EMD Daily Work Report System</h1>
+                <p>Electrical Maintenance Department &nbsp;|&nbsp; Daily Work Report System</p>
+            </div>
+        </div>
+        <div class="hdr-right" id="hdrDate">
+            <span class="sync-indicator" id="syncIndicator" style="display:none">
+                <span class="sync-dot" id="syncDot"></span>
+                <span id="syncLabel">Not Connected</span>
+            </span>
+            <div id="hdrDateText" style="font-size:11px;opacity:.7;text-align:right"></div>
+        </div>
+    </div>
+
+    <div class="nav">
+        <div class="ntab on" onclick="goPage('dashboard')" id="tab-dashboard">📊 &nbsp;Dashboard</div>
+        <div class="ntab" onclick="goPage('addentry')" id="tab-addentry">➕ &nbsp;Add Daily Entry</div>
+        <div class="ntab" onclick="goPage('folders')" id="tab-folders">📁 &nbsp;Monthly Folders</div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="wrap">
+
+        <!-- ════════════ DASHBOARD ════════════ -->
+        <div class="pg on" id="pg-dashboard">
+            <div class="ph">
+                <div class="ph-t">
+                    <h2>📋 Work Report Dashboard</h2>
+                    <p>Work details for all days &nbsp;|&nbsp; All daily work reports</p>
+                </div>
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap" class="no-print">
+                    <button class="btn btn-org" onclick="goPage('addentry')">➕ &nbsp;Add New Entry</button>
+                </div>
+            </div>
+
+            <div class="stats" id="statsGrid"></div>
+
+            <div id="dashFolders" style="display:none;margin-bottom:22px"></div>
+
+            <div class="dash-search no-print">
+                <label>🔍 &nbsp;Search by Date :</label>
+                <input type="date" class="fc-ctrl" id="dsDate" style="width:auto;padding:8px 14px" onchange="dashSearch()">
+                <button class="btn btn-blue btn-sm" onclick="dashSearch()">Search</button>
+                <button class="btn btn-out btn-sm" onclick="dashClear()">✕ &nbsp;Show All</button>
+                <div class="ds-info" id="dsInfo"></div>
+            </div>
+
+            <div id="dashContent"></div>
+        </div>
+
+        <!-- ════════════ ADD ENTRY ════════════ -->
+        <div class="pg" id="pg-addentry">
+            <div class="ph">
+                <div class="ph-t">
+                    <h2>➕ Add New Daily Entry</h2>
+                    <p>Fill all tasks for one day together</p>
+                </div>
+            </div>
+
+            <!-- Date and Report Details section REMOVED as requested -->
+
+            <div class="fc">
+                <div class="fc-title">⚡ Tasks / Work Details
+                    <span style="background:var(--org);color:#fff;padding:2px 11px;border-radius:20px;font-size:12px;font-weight:600;margin-left:6px" id="taskCountBadge">0 Tasks</span>
+                </div>
+                <div id="tasksContainer"></div>
+                <button class="atbtn" onclick="addTask()">➕ &nbsp;Add Another Task</button>
+            </div>
+
+            <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:4px" class="no-print">
+                <button class="btn btn-out" onclick="clearForm()">🗑 &nbsp;Clear Form</button>
+                <button class="btn btn-org" onclick="saveEntry()">💾 &nbsp;Save Day Entry</button>
+            </div>
+        </div>
+
+        <!-- ════════════ MONTHLY FOLDERS ════════════ -->
+        <div class="pg" id="pg-folders">
+            <div class="ph">
+                <div class="ph-t">
+                    <h2>📁 Monthly Folders</h2>
+                    <p>All data organized month-wise &nbsp;|&nbsp; Click folder to expand days</p>
+                </div>
+            </div>
+
+            <div class="dash-search no-print">
+                <label>🔍 &nbsp;Date to Date :</label>
+                <input type="date" class="fc-ctrl" id="frDateFrom" style="width:auto;padding:8px 14px">
+                <span style="font-size:13px;color:var(--light);font-weight:600">to</span>
+                <input type="date" class="fc-ctrl" id="frDateTo" style="width:auto;padding:8px 14px">
+                <button class="btn btn-blue btn-sm" onclick="filterFoldersByRange()">🔍 &nbsp;Filter</button>
+                <button class="btn btn-out btn-sm" onclick="clearFolderRange()">✕ &nbsp;Show All Months</button>
+                <div class="ds-info" id="frInfo"></div>
+            </div>
+
+            <div id="rangeResultBox" style="display:none;margin-bottom:22px"></div>
+            <div id="foldersContent"></div>
+        </div>
+
+    </div><!-- /wrap -->
+
+    <!-- ════════════ GOOGLE SHEETS MODAL ════════════ -->
+    <div class="gs-modal-overlay" id="gsModalOverlay">
+        <div class="gs-modal">
+            <h3>🟢 Google Sheets Connect</h3>
+            <p class="gs-sub">Save the URL once — data will auto-sync to Google Sheet on every save</p>
+
+            <div class="gs-steps">
+                <strong>How to Setup?</strong><br>
+                1️⃣ Open Google Sheet → <strong>Extensions → Apps Script</strong><br>
+                2️⃣ Paste the script below → <strong>Save → Deploy → New Deployment</strong><br>
+                3️⃣ Type: <strong>Web App</strong> | Execute as: <strong>Me</strong> | Access: <strong>Anyone</strong><br>
+                4️⃣ Deploy → Copy the Web App URL and paste it here
+            </div>
+
+            <div class="gs-field">
+                <label>Apps Script Web App URL</label>
+                <input type="url" id="gsUrlInput" placeholder="https://script.google.com/macros/s/AKfy.../exec" />
+            </div>
+
+            <div id="gsStatus" class="gs-status"></div>
+
+            <div class="gs-btns">
+                <button class="btn btn-out" onclick="closeGSModal()">Cancel</button>
+                <button class="btn btn-blue" onclick="testGSConnection()">🔗 Test Connection</button>
+                <button class="btn btn-gs" onclick="saveGSUrl()">💾 Save URL</button>
+            </div>
+
+            <hr style="margin:20px 0;border:none;border-top:1px solid var(--bdr)">
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <button class="btn btn-blue" onclick="syncFromSheets()" style="flex:1">
+                    ⬇️ &nbsp;Download from Google Sheet
+                </button>
+            </div>
+            <p style="font-size:11px;color:var(--light);text-align:center;margin-top:10px">
+                ✅ Data auto-syncs to Google Sheet on every save<br>
+                Download = Import Sheet data from another device to this app
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let DB = JSON.parse(localStorage.getItem('ntpc_emd_v2') || '[]');
+        let taskSeq = 0,
+            taskIds = [];
+
+        function persist() {
+            localStorage.setItem('ntpc_emd_v2', JSON.stringify(DB));
+            autoSyncToSheets(); // push latest data to the shared Google Sheet automatically
+        }
+
+        // ── NAV ──
+        let formInited = false;
+        let editingDate = null;
+
+        function goPage(name) {
+            document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+            document.querySelectorAll('.ntab').forEach(t => t.classList.remove('on'));
+            document.getElementById('pg-' + name).classList.add('on');
+            document.getElementById('tab-' + name).classList.add('on');
+            if (name === 'dashboard') renderDash();
+            if (name === 'addentry') { if (!formInited) { initForm();
+                    formInited = true; } }
+            if (name === 'folders') { renderFolders(); clearFolderRange(); }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ── DASHBOARD ──
+        function renderDash() {
+            renderStats();
+            document.getElementById('dsDate').value = '';
+            document.getElementById('dsInfo').textContent = '';
+            renderCards(DB);
+        }
+
+        function renderStats() {
+            const tot = DB.length;
+            const tasks = DB.reduce((s, r) => s + r.tasks.length, 0);
+            const done = DB.reduce((s, r) => s + r.tasks.filter(t => t.status === 'Completed').length, 0);
+            const pend = DB.reduce((s, r) => s + r.tasks.filter(t => t.status === 'Pending' || t.status === 'In Progress')
+            .length, 0);
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="scard b"><div class="sc-lbl">📅 Total Days</div><div class="sc-val">${tot}</div></div>
+                <div class="scard"><div class="sc-lbl">⚡ Total Tasks</div><div class="sc-val">${tasks}</div></div>
+                <div class="scard g"><div class="sc-lbl">✅ Completed</div><div class="sc-val">${done}</div></div>
+                <div class="scard y"><div class="sc-lbl">⏳ Pending / In Progress</div><div class="sc-val">${pend}</div></div>`;
+        }
+
+        function renderCards(data, highlight = '') {
+            const box = document.getElementById('dashContent');
+            if (!data.length) {
+                box.innerHTML = `<div class="empty"><div class="empty-ico">📋</div>
+                      <h3>No Entry Found</h3>
+                      <p>${highlight?'No Report found for this Date':'Add your first Entry'}</p><br>
+                      ${highlight?`<button class="btn btn-org" onclick="goPage('addentry')">➕ Add Entry for this Day</button>`
+                      :`<button class="btn btn-org" onclick="goPage('addentry')">➕ Add Entry</button>`}
+                    </div>`;
+                return;
+            }
+            const sorted = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
+            box.innerHTML = sorted.map(r => dayCard(r, true, r.date === highlight)).join('');
+        }
+
+        // ── DASHBOARD SEARCH ──
+        function dashSearch() {
+            const d = document.getElementById('dsDate').value;
+            if (!d) { dashClear(); return; }
+            const found = DB.find(x => x.date === d);
+            const info = document.getElementById('dsInfo');
+            if (found) {
+                info.innerHTML = `<span style="color:var(--green);font-weight:600">✅ Entry found for ${fmtDate(d)}</span>`;
+                renderCards([found], d);
+            } else {
+                info.innerHTML = `<span style="color:var(--red);font-weight:600">❌ No entry found for ${fmtDate(d)}</span>`;
+                renderCards([], d);
+            }
+        }
+
+        function dashClear() {
+            document.getElementById('dsDate').value = '';
+            document.getElementById('dsInfo').textContent = '';
+            renderCards(DB);
+        }
+
+        // ── DAY CARD ──
+        function sbCls(s) { return s === 'Completed' ? 'sb-c' : s === 'In Progress' ? 'sb-i' : s === 'Cancelled' ? 'sb-x' :
+                'sb-p'; }
+
+        function dayCard(r, showEdit, isHighlight = false) {
+            const rows = r.tasks.map((t, i) => `
+                    <tr>
+                      <td><div class="sno">${i+1}</div></td>
+                      <td><strong>${t.name}</strong></td>
+                      <td>${t.designation||'—'}</td>
+                      <td>${t.area||'—'}</td>
+                      <td>${t.reportNo||r.reportNo||'—'}</td>
+                      <td>${t.category||'—'}</td>
+                      <td><span class="sb ${sbCls(t.status)}">${t.status}</span></td>
+                      <td style="white-space:nowrap">${fmtDate(t.taskDate||r.date)}</td>
+                      <td style="word-break:break-word;max-width:200px"><strong>${t.title}</strong></td>
+                      <td style="white-space:pre-wrap;word-break:break-word;min-width:180px;max-width:280px">${t.detail}</td>
+                      <td><button class='btn btn-sm btn-del no-print' onclick="deleteTaskFromDay('${r.date}',${i})">🗑 Task</button></td>
+                    </tr>`).join('');
+
+            const acts = showEdit ?
+                `<button class="btn btn-sm btn-wht no-print" onclick="editEntry('${r.date}')">✏ Edit</button>
+                       <button class="btn btn-sm btn-wht no-print" onclick="printDay('${r.date}')">🖨 Print</button>
+                       <button class="btn btn-sm no-print" style="background:rgba(220,38,38,.22);border:1px solid rgba(255,100,100,.4);color:#fff;border-radius:9px;padding:6px 11px;cursor:pointer;font-weight:600;" onclick="delEntry('${r.date}')">🗑</button>`
+                :
+                `<button class="btn btn-sm btn-wht no-print" onclick="printDay('${r.date}')">🖨 Print</button>`;
+
+            const done = r.tasks.filter(t => t.status === 'Completed').length;
+            const pend = r.tasks.filter(t => t.status === 'Pending').length;
+            const prog = r.tasks.filter(t => t.status === 'In Progress').length;
+            const rptNo = r.tasks[0]?.reportNo || r.reportNo || '';
+
+            return `
+                  <div class="dc${isHighlight?' search-match':''}" id="dc-${r.date}">
+                    <div class="dc-head">
+                      <div>
+                        <div class="dc-date">📅 &nbsp;${fmtDate(r.date)}</div>
+                        <div class="dc-meta">
+                          <span>⚡ <strong>${r.tasks.length}</strong> Task${r.tasks.length!==1?'s':''}</span>
+                          ${rptNo?`<span style="color:#BAE6FD">📋 ${rptNo}</span>`:''}
+                          ${done?`<span style="color:#86EFAC">✅ ${done} Done</span>`:''}
+                          ${prog?`<span style="color:#93C5FD">🔄 ${prog} In Progress</span>`:''}
+                          ${pend?`<span style="color:#FCD34D">⏳ ${pend} Pending</span>`:''}
+                        </div>
+                      </div>
+                      <div class="dc-acts">${acts}</div>
+                    </div>
+                    <div class="dc-body">
+                      <table class="rt">
+                        <thead><tr>
+                          <th>S.No</th><th>Electrician Name</th><th>Designation</th>
+                          <th>Area</th><th>Report No</th>
+                          <th>Category</th><th>Status</th><th>Date</th>
+                          <th>Work Title / Heading</th><th>Work Detail (What / When / Result)</th><th>Delete</th>
+                        </tr></thead>
+                        <tbody>${rows}</tbody>
+                      </table>
+                    </div>
+                  </div>`;
+        }
+
+        function toggleDashFolders() {
+            const box = document.getElementById('dashFolders');
+            const btn = document.getElementById('foldersToggleBtn');
+            if (box.style.display === 'none') {
+                renderFoldersInto(box);
+                box.style.display = 'block';
+                btn.textContent = '📁  Hide Folders';
+                box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                box.style.display = 'none';
+                btn.textContent = '📁  Monthly Folders';
+            }
+        }
+
+        function renderFoldersInto(box) {
+            if (!DB.length) {
+                box.innerHTML = `<div class="empty" style="padding:30px"><div class="empty-ico">📁</div>
+                      <h3>No Data Found</h3><p>Add an entry first</p></div>`;
+                return;
+            }
+            const map = {};
+            DB.forEach(r => { const k = r.date.slice(0, 7);
+                (map[k] = map[k] || []).push(r); });
+            const months = Object.keys(map).sort((a, b) => b.localeCompare(a));
+            box.innerHTML = '<div class="mf-grid">' + months.map(key => {
+                const entries = map[key].sort((a, b) => new Date(b.date) - new Date(a.date));
+                const totalTasks = entries.reduce((s, r) => s + r.tasks.length, 0);
+                const done = entries.reduce((s, r) => s + r.tasks.filter(t => t.status === 'Completed').length, 0);
+                const [yr, mo] = key.split('-');
+                const monthName = new Date(yr, mo - 1, 1).toLocaleDateString('en-IN', { month: 'long',
+                    year: 'numeric' });
+                return `
+                        <div class="mfolder" onclick="openMonthFolder('${key}')">
+                          <div class="mf-bar"></div>
+                          <div class="mf-top">
+                            <div class="mf-icon">📁</div>
+                            <div class="mf-info">
+                              <div class="mf-month">${monthName}</div>
+                              <div class="mf-sub">
+                                <span>📅 ${entries.length} Days</span>
+                                <span>⚡ ${totalTasks}</span>
+                                <span style="color:var(--green)">✅ ${done}</span>
+                              </div>
+                            </div>
+                            <div class="mf-arrow">▶</div>
+                          </div>
+                        </div>`;
+            }).join('') + '</div>';
+        }
+
+        function openMonthFolder(key) {
+            const entries = DB.filter(r => r.date.startsWith(key));
+            document.getElementById('dsDate').value = '';
+            const [yr, mo] = key.split('-');
+            const monthName = new Date(yr, mo - 1, 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+            document.getElementById('dsInfo').innerHTML =
+                `<span style="color:var(--blue);font-weight:600">📁 ${monthName} — ${entries.length} Days</span> &nbsp;<button class="btn btn-sm btn-out" onclick="dashClear()">✕ Clear</button> &nbsp;<button class="btn btn-sm btn-org" onclick="printMonth('${key}')">🖨 Print Month</button>`;
+            renderCards(entries);
+            document.getElementById('dashContent').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ── MONTHLY FOLDERS ──
+        function renderFolders() {
+            const box = document.getElementById('foldersContent');
+            if (!DB.length) {
+                box.innerHTML = `<div class="empty"><div class="empty-ico">📁</div>
+                      <h3>No Data Found</h3><p>Add an entry from the Dashboard first</p></div>`;
+                return;
+            }
+
+            const map = {};
+            DB.forEach(r => {
+                const key = r.date.slice(0, 7);
+                if (!map[key]) map[key] = [];
+                map[key].push(r);
+            });
+
+            const months = Object.keys(map).sort((a, b) => b.localeCompare(a));
+
+            box.innerHTML = months.map(key => {
+                const entries = map[key].sort((a, b) => new Date(b.date) - new Date(a.date));
+                const totalTasks = entries.reduce((s, r) => s + r.tasks.length, 0);
+                const done = entries.reduce((s, r) => s + r.tasks.filter(t => t.status === 'Completed').length, 0);
+                const [yr, mo] = key.split('-');
+                const monthName = new Date(yr, mo - 1, 1).toLocaleDateString('en-IN', { month: 'long',
+                    year: 'numeric' });
+
+                let sno = 0;
+                const allTaskRows = entries.map(r =>
+                    r.tasks.map((t, ti) => {
+                        sno++;
+                        return `<tr>
+                            <td style="text-align:center;white-space:nowrap">${sno}</td>
+                            <td style="white-space:nowrap">${ti===0?`<strong>${fmtDate(r.date)}</strong>`:''}</td>
+                            <td><strong>${t.name}</strong></td>
+                            <td>${t.designation||'—'}</td>
+                            <td>${t.area||'—'}</td>
+                            <td>${t.reportNo||r.reportNo||'—'}</td>
+                            <td>${t.category||'—'}</td>
+                            <td><span class="sb ${sbCls(t.status)}">${t.status}</span></td>
+                            <td style="white-space:nowrap">${fmtDate(t.taskDate||r.date)}</td>
+                            <td style="word-break:break-word;max-width:160px"><strong>${t.title}</strong></td>
+                            <td style="white-space:pre-wrap;word-break:break-word;min-width:160px;max-width:240px">${t.detail}</td>
+                            <td><button class="btn btn-sm btn-del" onclick="deleteTaskFromDay('${r.date}',${ti})">🗑</button></td>
+                        </tr>`;
+                    }).join('')
+                ).join('');
+
+                return `
+                        <div class="mfolder" id="mf-${key}">
+                          <div class="mf-bar"></div>
+                          <div class="mf-top" onclick="toggleFolder('${key}')">
+                            <div class="mf-icon" id="mficon-${key}">📁</div>
+                            <div class="mf-info">
+                              <div class="mf-month">${monthName}</div>
+                              <div class="mf-sub">
+                                <span>📅 ${entries.length} Days</span>
+                                <span>⚡ ${totalTasks} Tasks</span>
+                                <span style="color:var(--green)">✅ ${done} Done</span>
+                              </div>
+                            </div>
+                            <div class="mf-arrow" id="mfarr-${key}">▶</div>
+                          </div>
+                          <div class="mf-body" id="mfbody-${key}">
+                            <div class="mf-head-acts">
+                              <span style="font-size:13px;color:var(--light);font-weight:500">📅 ${entries.length} Days &nbsp;|&nbsp; ⚡ ${totalTasks} Tasks &nbsp;|&nbsp; ✅ ${done} Done</span>
+                              <button class="btn btn-sm btn-org" onclick="printMonth('${key}')">🖨 &nbsp;Print Month</button>
+                            </div>
+                            <div style="overflow-x:auto">
+                              <table class="rt" style="font-size:12px;min-width:900px">
+                                <thead><tr>
+                                  <th>S.No</th><th>Date</th><th>Electrician Name</th><th>Designation</th>
+                                  <th>Area</th><th>Report No</th><th>Category</th><th>Status</th>
+                                  <th>Task Date</th><th>Work Title</th><th>Work Detail</th><th>Del</th>
+                                </tr></thead>
+                                <tbody>${allTaskRows}</tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>`;
+            }).join('');
+        }
+
+        function toggleFolder(key) {
+            const el = document.getElementById('mf-' + key);
+            const ico = document.getElementById('mficon-' + key);
+            const arr = document.getElementById('mfarr-' + key);
+            el.classList.toggle('open');
+            ico.textContent = el.classList.contains('open') ? '📂' : '📁';
+        }
+
+        function viewDayFromFolder(date) {
+            goPage('dashboard');
+            setTimeout(() => {
+                document.getElementById('dsDate').value = date;
+                dashSearch();
+                const el = document.getElementById('dc-' + date);
+                if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
+            }, 100);
+        }
+
+        function delFromFolder(date, key) {
+            if (!confirm(`Delete entry for ${fmtDate(date)}?`)) return;
+            DB = DB.filter(x => x.date !== date);
+            persist();
+            autoSyncToSheets();
+            toast('🗑 Entry deleted.');
+            renderFolders();
+            // Re-open the same folder after re-render
+            const el = document.getElementById('mf-' + key);
+            const ico = document.getElementById('mficon-' + key);
+            if (el) { el.classList.add('open'); if (ico) ico.textContent = '📂'; }
+        }
+
+        // ── DATE TO DATE FILTER (Monthly Folders page) ──
+        function filterFoldersByRange() {
+            const from = document.getElementById('frDateFrom').value;
+            const to   = document.getElementById('frDateTo').value;
+            const info = document.getElementById('frInfo');
+            const box  = document.getElementById('rangeResultBox');
+
+            if (!from || !to) {
+                info.innerHTML = `<span style="color:var(--red);font-weight:600">❗ Please select both From and To dates</span>`;
+                return;
+            }
+            if (from > to) {
+                info.innerHTML = `<span style="color:var(--red);font-weight:600">❗ From date must be before To date</span>`;
+                return;
+            }
+
+            const entries = DB.filter(r => r.date >= from && r.date <= to)
+                               .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            document.getElementById('foldersContent').style.display = 'none';
+
+            if (!entries.length) {
+                info.innerHTML = `<span style="color:var(--red);font-weight:600">❌ No entry found between ${fmtDate(from)} and ${fmtDate(to)}</span>`;
+                box.style.display = 'block';
+                box.innerHTML = `<div class="empty"><div class="empty-ico">📭</div>
+                      <h3>No Entry Found</h3><p>No report found in this date range</p></div>`;
+                return;
+            }
+
+            const totalTasks = entries.reduce((s, r) => s + r.tasks.length, 0);
+            const done = entries.reduce((s, r) => s + r.tasks.filter(t => t.status === 'Completed').length, 0);
+
+            info.innerHTML = `<span style="color:var(--green);font-weight:600">✅ ${entries.length} din mile (${fmtDate(from)} → ${fmtDate(to)})</span>`;
+
+            const dayRows = entries.map((r, i) => {
+                const dc = r.tasks.filter(t => t.status === 'Completed').length;
+                const dp = r.tasks.filter(t => t.status === 'Pending').length;
+                const di = r.tasks.filter(t => t.status === 'In Progress').length;
+                return `<tr>
+                        <td style="width:36px;text-align:center"><strong>${i+1}</strong></td>
+                        <td><strong>${fmtDate(r.date)}</strong></td>
+                        <td style="text-align:center"><span style="background:var(--blue);color:#fff;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:700">${r.tasks.length}</span></td>
+                        <td>
+                          ${dc?`<span class="sb sb-c" style="margin-right:4px">✅ ${dc}</span>`:''}
+                          ${di?`<span class="sb sb-i" style="margin-right:4px">🔄 ${di}</span>`:''}
+                          ${dp?`<span class="sb sb-p">⏳ ${dp}</span>`:''}
+                        </td>
+                        <td>
+                          <div class="mf-acts">
+                            <button class="btn btn-sm btn-del" onclick="delFromRangeRow('${r.date}')">🗑 Delete</button>
+                          </div>
+                        </td>
+                      </tr>`;
+            }).join('');
+
+            box.style.display = 'block';
+            box.innerHTML = `
+                    <div class="mfolder open" id="mf-range">
+                      <div class="mf-bar"></div>
+                      <div class="mf-top">
+                        <div class="mf-icon">📂</div>
+                        <div class="mf-info">
+                          <div class="mf-month">📅 ${fmtDate(from)} &nbsp;→&nbsp; ${fmtDate(to)}</div>
+                          <div class="mf-sub">
+                            <span>📅 ${entries.length} Days</span>
+                            <span>⚡ ${totalTasks} Tasks</span>
+                            <span style="color:var(--green)">✅ ${done} Done</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mf-body" id="mfbody-range" style="max-height:none;display:block">
+                        <div class="mf-head-acts">
+                          <span style="font-size:13px;color:var(--light);font-weight:500">📅 ${entries.length} Days | ⚡ ${totalTasks} Tasks</span>
+                          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                            <button class="btn btn-sm btn-blue" onclick="viewRangeReport('${from}','${to}')">👁 &nbsp;View Range</button>
+                            <button class="btn btn-sm btn-out" onclick="editRangeEntries('${from}','${to}')">✏ &nbsp;Edit</button>
+                            <button class="btn btn-sm btn-org" onclick="printRange('${from}','${to}')">🖨 &nbsp;Print Range</button>
+                          </div>
+                        </div>
+                        <table class="mf-days-table">
+                          <thead><tr>
+                            <th>#</th><th>Date</th><th>Tasks</th><th>Status</th><th>Delete</th>
+                          </tr></thead>
+                          <tbody>${dayRows}</tbody>
+                        </table>
+                      </div>
+                    </div>`;
+            box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function clearFolderRange() {
+            document.getElementById('frDateFrom').value = '';
+            document.getElementById('frDateTo').value = '';
+            document.getElementById('frInfo').textContent = '';
+            document.getElementById('rangeResultBox').style.display = 'none';
+            document.getElementById('rangeResultBox').innerHTML = '';
+            document.getElementById('foldersContent').style.display = 'block';
+        }
+
+        function delFromRangeRow(date) {
+            if (!confirm(`Delete entry for ${fmtDate(date)}?`)) return;
+            DB = DB.filter(x => x.date !== date);
+            persist();
+            autoSyncToSheets();
+            toast('🗑 Entry deleted.');
+            renderFolders();
+            filterFoldersByRange();
+        }
+
+        // ── PRINT DATE RANGE ──
+        function printRange(from, to) {
+            const entries = DB.filter(r => r.date >= from && r.date <= to)
+                               .sort((a, b) => new Date(a.date) - new Date(b.date));
+            if (!entries.length) { toast('No entries found for this range', true); return; }
+
+            let allRows = '';
+            let sno = 1;
+            entries.forEach(r => {
+                r.tasks.forEach((t, i) => {
+                    allRows += `<tr>
+                            <td style="text-align:center">${sno++}</td>
+                            <td>${i===0?'<strong>'+fmtDate(r.date)+'</strong>':''}</td>
+                            <td>${t.name}</td>
+                            <td>${t.designation||'—'}</td>
+                            <td>${t.section||r.section||'—'}</td>
+                            <td>${t.area||'—'}</td>
+                            <td>${t.reportNo||r.reportNo||'—'}</td>
+                            <td>${t.category||'—'}</td>
+                            <td><strong>${t.status}</strong></td>
+                            <td>${fmtDate(t.taskDate||r.date)}</td>
+                            <td><strong>${t.title}</strong></td>
+                            <td style="white-space:pre-wrap;word-break:break-word">${t.detail}</td>
+                          </tr>`;
+                });
+            });
+
+            const win = window.open('', '_blank');
+            win.document.write(`<!DOCTYPE html><html><head>
+                  <meta charset="UTF-8"><title>NTPC EMD – ${fmtDate(from)} to ${fmtDate(to)}</title>
+                  <style>
+                    *{margin:0;padding:0;box-sizing:border-box;}
+                    body{font-family:Arial,sans-serif;padding:20px 26px;color:#000;font-size:11.5px;}
+                    .ph{text-align:center;margin-bottom:18px;padding-bottom:12px;border-bottom:3px solid #003366;}
+                    .ph h1{color:#003366;font-size:19px;margin-bottom:3px;}
+                    .ph h2{color:#E8620A;font-size:13px;margin-bottom:6px;}
+                    .ph p{font-size:12px;color:#444;}
+                    table{width:100%;border-collapse:collapse;margin-top:12px;}
+                    th{background:#003366;color:#fff;padding:8px 9px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;}
+                    td{padding:8px 9px;border:1px solid #ccc;vertical-align:top;line-height:1.45;word-wrap:break-word;overflow-wrap:break-word;word-break:break-word;}
+                    tr:nth-child(even) td{background:#F5F8FC;}
+                    .ft{margin-top:28px;display:flex;justify-content:space-between;}
+                    .sig{border-top:1px solid #000;padding-top:5px;width:150px;text-align:center;font-size:11px;}
+                    .gen{margin-top:20px;text-align:center;font-size:10px;color:#888;}
+                  </style></head><body>
+                  <div class="ph">
+                    <h1>⚡ NTPC – Electrical Maintenance Department</h1>
+                    <h2>Work Report — ${fmtDate(from)} to ${fmtDate(to)}</h2>
+                    <p>Total Days: ${entries.length} &nbsp;|&nbsp; Total Tasks: ${entries.reduce((s,r)=>s+r.tasks.length,0)}</p>
+                  </div>
+                  <table>
+                    <thead><tr>
+                      <th>S.No</th><th>Date</th><th>Electrician Name</th><th>Designation</th>
+                      <th>Section</th><th>Area</th><th>Report No</th><th>Category</th>
+                      <th>Status</th><th>Task Date</th><th>Work Title</th><th>Work Detail</th>
+                    </tr></thead>
+                    <tbody>${allRows}</tbody>
+                  </table>
+                  <div class="ft">
+                    <div><div class="sig">Prepared by</div></div>
+                    <div><div class="sig">Checked by</div></div>
+                    <div><div class="sig">Approved by</div></div>
+                  </div>
+                  <div class="gen">Generated by NTPC EMD Report System &nbsp;|&nbsp; ${new Date().toLocaleString('en-IN')}</div>
+                  </body></html>`);
+            win.document.close();
+            setTimeout(() => win.print(), 500);
+        }
+
+        // ── PRINT MONTH ──
+        function printMonth(key) {
+            const [yr, mo] = key.split('-');
+            const monthName = new Date(yr, mo - 1, 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+            const entries = DB.filter(r => r.date.startsWith(key)).sort((a, b) => new Date(a.date) - new Date(b.date));
+            if (!entries.length) { toast('No entries found for this month', true); return; }
+
+            let allRows = '';
+            let sno = 1;
+            entries.forEach(r => {
+                r.tasks.forEach((t, i) => {
+                    allRows += `<tr>
+                            <td style="text-align:center">${sno++}</td>
+                            <td>${i===0?'<strong>'+fmtDate(r.date)+'</strong>':''}</td>
+                            <td>${t.name}</td>
+                            <td>${t.designation||'—'}</td>
+                            <td>${t.section||r.section||'—'}</td>
+                            <td>${t.area||'—'}</td>
+                            <td>${t.reportNo||r.reportNo||'—'}</td>
+                            <td>${t.category||'—'}</td>
+                            <td><strong>${t.status}</strong></td>
+                            <td>${fmtDate(t.taskDate||r.date)}</td>
+                            <td><strong>${t.title}</strong></td>
+                            <td style="white-space:pre-wrap;word-break:break-word">${t.detail}</td>
+                          </tr>`;
+                });
+            });
+
+            const win = window.open('', '_blank');
+            win.document.write(`<!DOCTYPE html><html><head>
+                  <meta charset="UTF-8"><title>NTPC EMD – ${monthName}</title>
+                  <style>
+                    *{margin:0;padding:0;box-sizing:border-box;}
+                    body{font-family:Arial,sans-serif;padding:20px 26px;color:#000;font-size:11.5px;}
+                    .ph{text-align:center;margin-bottom:18px;padding-bottom:12px;border-bottom:3px solid #003366;}
+                    .ph h1{color:#003366;font-size:19px;margin-bottom:3px;}
+                    .ph h2{color:#E8620A;font-size:13px;margin-bottom:6px;}
+                    .ph p{font-size:12px;color:#444;}
+                    table{width:100%;border-collapse:collapse;margin-top:12px;}
+                    th{background:#003366;color:#fff;padding:8px 9px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;}
+                    td{padding:8px 9px;border:1px solid #ccc;vertical-align:top;line-height:1.45;word-wrap:break-word;overflow-wrap:break-word;word-break:break-word;}
+                    tr:nth-child(even) td{background:#F5F8FC;}
+                    .ft{margin-top:28px;display:flex;justify-content:space-between;}
+                    .sig{border-top:1px solid #000;padding-top:5px;width:150px;text-align:center;font-size:11px;}
+                    .gen{margin-top:20px;text-align:center;font-size:10px;color:#888;}
+                  </style></head><body>
+                  <div class="ph">
+                    <h1>⚡ NTPC – Electrical Maintenance Department</h1>
+                    <h2>Monthly Work Report — ${monthName}</h2>
+                    <p>Total Days: ${entries.length} &nbsp;|&nbsp; Total Tasks: ${entries.reduce((s,r)=>s+r.tasks.length,0)}</p>
+                  </div>
+                  <table>
+                    <thead><tr>
+                      <th>S.No</th><th>Date</th><th>Electrician Name</th><th>Designation</th>
+                      <th>Section</th><th>Area</th><th>Report No</th><th>Category</th>
+                      <th>Status</th><th>Task Date</th><th>Work Title</th><th>Work Detail</th>
+                    </tr></thead>
+                    <tbody>${allRows}</tbody>
+                  </table>
+                  <div class="ft">
+                    <div><div class="sig">Prepared by</div></div>
+                    <div><div class="sig">Checked by</div></div>
+                    <div><div class="sig">Approved by</div></div>
+                  </div>
+                  <div class="gen">Generated by NTPC EMD Report System &nbsp;|&nbsp; ${new Date().toLocaleString('en-IN')}</div>
+                  </body></html>`);
+            win.document.close();
+            setTimeout(() => win.print(), 500);
+        }
+
+        // ── FORM ──
+        function initForm() {
+            taskSeq = 0;
+            taskIds = [];
+            editingDate = null;
+            document.getElementById('tasksContainer').innerHTML = '';
+            addTask();
+            updateTaskBadge();
+        }
+
+        function updateTaskBadge() {
+            const n = document.querySelectorAll('.te').length;
+            document.getElementById('taskCountBadge').textContent = n + ' Task' + (n !== 1 ? 's' : '');
+        }
+
+        function addTask() {
+            taskSeq++;
+            const id = taskSeq;
+            taskIds.push(id);
+            const box = document.getElementById('tasksContainer');
+            const div = document.createElement('div');
+            div.className = 'te';
+            div.id = 'te-' + id;
+            div.innerHTML = `
+                    <div class="te-hdr">
+                      <div class="te-hdr-left">
+                        <div class="tnum" id="tnum-${id}">${taskIds.length}</div>
+                        <div class="tlbl">Task #${taskIds.length}</div>
+                      </div>
+                      <button class="btn btn-sm btn-del no-print" onclick="removeTask(${id})">✕ &nbsp;Remove</button>
+                    </div>
+                    <div class="frow c3">
+                      <div class="fg"><label>Electrician Name <span class="req">*</span></label>
+                        <input type="text" class="fc-ctrl" id="n${id}_name" placeholder="Full Name"></div>
+                      <div class="fg"><label>Designation</label>
+                        <select class="fc-ctrl" id="n${id}_desg">
+                          <option value="">— Select —</option>
+                          <option>Electrician</option>
+                          <option>Helper</option>
+                          <option>Supervisor</option>
+                          <option>Shift Sheat</option>
+                          <option>Line Man</option>
+                          <option>Welder</option>
+                          <option>Other</option>
+                        </select></div>
+                      <div class="fg"><label>Section</label>
+                        <input type="text" class="fc-ctrl" id="n${id}_section" placeholder="e.g. 220kV SS"></div>
+                    </div>
+                    <div class="frow c3">
+                      <div class="fg"><label>Area</label>
+                        <input type="text" class="fc-ctrl" id="n${id}_area" placeholder="e.g. Unit-1, Yard"></div>
+                      <div class="fg"><label>Report No.</label>
+                        <input type="text" class="fc-ctrl" id="n${id}_rno" placeholder="e.g. EMD/2024/001"></div>
+                      <div class="fg"><label>Category</label>
+                        <select class="fc-ctrl" id="n${id}_cat">
+                          <option value="">— Select —</option>
+                          <option>Lighting Maintenance</option>
+                          <option>RCCB Testing</option>
+                          <option>Lux Reading</option>
+                          <option>Overhauling Work</option>
+                          <option>Overhead Line Work</option>
+                          <option>Cable Laying</option>
+                          <option>Preventive Maintenance</option>
+                          <option>Breakdown Maintenance</option>
+                          <option>Inspection</option>
+                          <option>Testing &amp; Commissioning</option>
+                          <option>Safety Check</option>
+                          <option>New Installation</option>
+                          <option>Other</option>
+                        </select></div>
+                    </div>
+                    <div class="frow c3">
+                      <div class="fg"><label>Status</label>
+                        <select class="fc-ctrl" id="n${id}_sts">
+                          <option value="Completed">✅ Completed</option>
+                          <option value="In Progress">🔄 In Progress</option>
+                          <option value="Pending">⏳ Pending</option>
+                          <option value="Cancelled">❌ Cancelled</option>
+                        </select></div>
+                      <div class="fg"><label>Task Date</label>
+                        <input type="date" class="fc-ctrl" id="n${id}_tdate"></div>
+                      <div class="fg"><label>Work Title / Heading <span class="req">*</span></label>
+                        <input type="text" class="fc-ctrl" id="n${id}_title" placeholder="e.g. Transformer Oil Filtration"></div>
+                    </div>
+                    <div class="frow">
+                      <div class="fg"><label>Work Detail (What / When / Result) <span class="req">*</span></label>
+                        <textarea class="fc-ctrl" id="n${id}_detail" rows="3"
+                          placeholder="What work was done?&#10;When was it done?&#10;What was the result?"></textarea></div>
+                    </div>`;
+
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            const tdate = div.querySelector(`#n${id}_tdate`);
+            if (tdate && !tdate.value) tdate.value = today;
+
+            box.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            updateTaskBadge();
+        }
+
+        function removeTask(id) {
+            const el = document.getElementById('te-' + id);
+            if (el) { el.remove();
+                taskIds = taskIds.filter(x => x !== id);
+                updateTaskBadge();
+                renumberTasks(); }
+        }
+
+        function renumberTasks() {
+            document.querySelectorAll('.te').forEach((el, i) => {
+                const id = el.id.replace('te-', '');
+                const nm = el.querySelector(`#tnum-${id}`);
+                if (nm) nm.textContent = i + 1;
+                const lb = nm?.nextElementSibling;
+                if (lb) lb.textContent = 'Task #' + (i + 1);
+            });
+        }
+
+        function clearForm() { if (confirm('Clear the form?')) { initForm();
+                formInited = true; } }
+
+        // ── SAVE ──
+        function saveEntry() {
+            const tes = document.querySelectorAll('.te');
+            if (!tes.length) { toast('❗ Please add at least one Task!', true); return; }
+
+            const tasks = [];
+            let firstDate = null;
+            let firstRpt = '';
+            let firstSec = '';
+
+            for (const te of tes) {
+                const id = te.id.replace('te-', '');
+                const name = document.getElementById(`n${id}_name`)?.value.trim();
+                const titl = document.getElementById(`n${id}_title`)?.value.trim();
+                const dtl = document.getElementById(`n${id}_detail`)?.value.trim();
+                if (!name) { toast(`❗ Task #${tasks.length+1}: Name is required!`, true); return; }
+                if (!titl) { toast(`❗ Task #${tasks.length+1}: Work Title is required!`, true); return; }
+                if (!dtl) { toast(`❗ Task #${tasks.length+1}: Work Detail is required!`, true); return; }
+
+                const taskDate = document.getElementById(`n${id}_tdate`)?.value || new Date().toISOString().split('T')[0];
+                const reportNo = document.getElementById(`n${id}_rno`)?.value.trim() || '';
+                const section = document.getElementById(`n${id}_section`)?.value.trim() || '';
+
+                if (!firstDate) firstDate = taskDate;
+                if (!firstRpt && reportNo) firstRpt = reportNo;
+                if (!firstSec && section) firstSec = section;
+
+                tasks.push({
+                    name,
+                    designation: document.getElementById(`n${id}_desg`)?.value || '',
+                    section: section,
+                    area: document.getElementById(`n${id}_area`)?.value.trim() || '',
+                    reportNo: reportNo,
+                    category: document.getElementById(`n${id}_cat`)?.value || '',
+                    status: document.getElementById(`n${id}_sts`)?.value || 'Completed',
+                    taskDate: taskDate,
+                    title: titl,
+                    detail: dtl
+                });
+            }
+
+            // Use the first task's date as the entry date, or today
+            const entryDate = firstDate || new Date().toISOString().split('T')[0];
+            const entryRpt = firstRpt || 'EMD/' + new Date().getFullYear() + '/' + String(entryDate.replace(/-/g, '')).slice(2);
+            const entrySec = firstSec || 'N/A';
+
+            // If editing, remove old entry
+            if (editingDate !== null) {
+                const origIdx = DB.findIndex(r => r.date === editingDate);
+                if (origIdx >= 0) DB.splice(origIdx, 1);
+                editingDate = null;
+            }
+
+            // Check if entry with this date already exists
+            const idx = DB.findIndex(r => r.date === entryDate);
+            if (idx >= 0) {
+                // Merge tasks into existing entry
+                const existing = DB[idx];
+                existing.tasks = existing.tasks.concat(tasks);
+                existing.reportNo = entryRpt || existing.reportNo;
+                existing.section = entrySec || existing.section;
+                existing.savedAt = new Date().toISOString();
+                DB.splice(idx, 1);
+                DB.unshift(existing);
+                toast(`✅ ${tasks.length} Task${tasks.length!==1?'s':''} Saved`);
+            } else {
+                const entry = { date: entryDate, reportNo: entryRpt, section: entrySec, tasks, savedAt: new Date().toISOString() };
+                DB.unshift(entry);
+                toast(`✅ ${tasks.length} Task${tasks.length!==1?'s':''} Saved`);
+            }
+
+            persist();
+            autoSyncToSheets();
+            formInited = false;
+            setTimeout(() => goPage('dashboard'), 1100);
+        }
+
+        // ── EDIT ──
+        function editEntry(date) {
+            const r = DB.find(x => x.date === date);
+            if (!r) return;
+
+            goPage('addentry');
+            editingDate = date;
+            formInited = true;
+            setTimeout(() => {
+                taskSeq = 0;
+                taskIds = [];
+                document.getElementById('tasksContainer').innerHTML = '';
+                r.tasks.forEach((t, i) => {
+                    addTask();
+                    const id = taskSeq;
+                    setTimeout(() => {
+                        const set = (sfx, v) => { const el = document.getElementById(`n${id}_${sfx}`);
+                            if (el) el.value = v || ''; };
+                        set('name', t.name);
+                        set('desg', t.designation);
+                        set('section', t.section || r.section);
+                        set('area', t.area);
+                        set('rno', t.reportNo || r.reportNo);
+                        set('cat', t.category);
+                        set('sts', t.status);
+                        set('tdate', t.taskDate || r.date);
+                        set('title', t.title);
+                        set('detail', t.detail);
+                    }, 60 * i + 30);
+                });
+                updateTaskBadge();
+            }, 80);
+        }
+
+        function deleteTaskFromDay(date, taskIndex) {
+            const entry = DB.find(x => x.date === date);
+            if (!entry) return;
+            if (!confirm('Are you sure you want to delete this Task?')) return;
+            entry.tasks.splice(taskIndex, 1);
+            if (entry.tasks.length === 0) {
+                DB = DB.filter(x => x.date !== date);
+            }
+            persist();
+            autoSyncToSheets();
+            toast('✅ Task deleted.');
+            renderDash();
+            renderFolders();
+            const fkey = date.slice(0, 7);
+            const fel = document.getElementById('mf-' + fkey);
+            const fico = document.getElementById('mficon-' + fkey);
+            if (fel) { fel.classList.add('open'); if (fico) fico.textContent = '📂'; }
+        }
+
+        // ── DELETE ──
+        function delEntry(date) {
+            if (!confirm(`Delete entry for ${fmtDate(date)}?`)) return;
+            DB = DB.filter(x => x.date !== date);
+            persist();
+            autoSyncToSheets();
+            toast('🗑 Entry deleted.');
+            renderDash();
+        }
+
+        // ── PRINT DAY ──
+        function printDay(date) {
+            const r = DB.find(x => x.date === date);
+            if (!r) return;
+            const rows = r.tasks.map((t, i) => `
+                    <tr>
+                      <td style="text-align:center;width:36px">${i+1}</td>
+                      <td><strong>${t.name}</strong></td><td>${t.designation||'—'}</td>
+                      <td>${t.section||r.section||'—'}</td><td>${t.area||'—'}</td>
+                      <td>${t.reportNo||r.reportNo||'—'}</td><td>${t.category||'—'}</td>
+                      <td><strong>${t.status}</strong></td><td>${fmtDate(t.taskDate||r.date)}</td>
+                      <td><strong>${t.title}</strong></td><td style="white-space:pre-line">${t.detail}</td>
+                    </tr>`).join('');
+            const win = window.open('', '_blank');
+            win.document.write(`<!DOCTYPE html><html><head>
+                  <meta charset="UTF-8"><title>NTPC EMD – ${fmtDate(date)}</title>
+                  <style>
+                    *{margin:0;padding:0;box-sizing:border-box;}
+                    body{font-family:Arial,sans-serif;padding:22px 28px;color:#000;font-size:12px;}
+                    .ph{text-align:center;margin-bottom:20px;padding-bottom:14px;border-bottom:3px solid #003366;}
+                    .ph h1{color:#003366;font-size:20px;margin-bottom:4px;}
+                    .ph h2{color:#E8620A;font-size:14px;margin-bottom:8px;}
+                    .ph-meta{display:flex;justify-content:center;gap:28px;font-size:12px;color:#444;flex-wrap:wrap;}
+                    .ph-meta span strong{color:#003366;}
+                    table{width:100%;border-collapse:collapse;margin-top:14px;font-size:11.5px;}
+                    th{background:#003366;color:#fff;padding:9px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
+                    td{padding:9px 10px;border:1px solid #ccc;vertical-align:top;line-height:1.5;word-wrap:break-word;overflow-wrap:break-word;word-break:break-word;}
+                    tr:nth-child(even) td{background:#F5F8FC;}
+                    .ft{margin-top:34px;display:flex;justify-content:space-between;}
+                    .sig{border-top:1px solid #000;padding-top:5px;width:160px;text-align:center;font-size:11px;}
+                    .gen{margin-top:22px;text-align:center;font-size:10px;color:#888;}
+                  </style></head><body>
+                  <div class="ph">
+                    <h1>⚡ NTPC – Electrical Maintenance Department</h1>
+                    <h2>Daily Work Report</h2>
+                    <div class="ph-meta">
+                      <span><strong>Date:</strong> ${fmtDate(date)}</span>
+                      <span><strong>Report No:</strong> ${r.reportNo||'N/A'}</span>
+                      <span><strong>Section:</strong> ${r.section||'N/A'}</span>
+                      <span><strong>Total Tasks:</strong> ${r.tasks.length}</span>
+                    </div>
+                  </div>
+                  <table>
+                    <thead><tr>
+                      <th>S.No</th><th>Electrician Name</th><th>Designation</th>
+                      <th>Section</th><th>Area</th><th>Report No</th>
+                      <th>Category</th><th>Status</th><th>Date</th>
+                      <th>Work Title / Heading</th><th>Work Detail (What / When / Result)</th>
+                    </tr></thead>
+                    <tbody>${rows}</tbody>
+                  </table>
+                  <div class="ft">
+                    <div><div class="sig">Prepared by</div></div>
+                    <div><div class="sig">Checked by</div></div>
+                    <div><div class="sig">Approved by</div></div>
+                  </div>
+                  <div class="gen">Generated by NTPC EMD Report System &nbsp;|&nbsp; ${new Date().toLocaleString('en-IN')}</div>
+                  </body></html>`);
+            win.document.close();
+            setTimeout(() => win.print(), 500);
+        }
+
+        // ── UTILS ──
+        function fmtDate(ds) {
+            if (!ds) return '—';
+            return new Date(ds + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+        }
+
+        function toast(msg, isErr = false) {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.className = 'toast' + (isErr ? ' err' : '');
+            el.classList.add('on');
+            setTimeout(() => el.classList.remove('on'), 3000);
+        }
+
+        // ── HEADER DATE ──
+        function setHdrDate() {
+            const d = new Date();
+            const dateEl = document.getElementById('hdrDateText');
+            if (dateEl) dateEl.textContent = d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
+        // ── GOOGLE SHEETS INTEGRATION ──
+        let GS_URL = 'https://script.google.com/macros/s/AKfycbwgm0U6Mnp3MGPCxlW5AZAQUE1yi2D7LxaQu-QrdHAlD0n7fsvNcbCvpEaRE2lP8bGB/exec'; // Hardcoded — no setup needed
+
+        function updateSyncUI() {
+            const dot = document.getElementById('syncDot');
+            const lbl = document.getElementById('syncLabel');
+            const ind = document.getElementById('syncIndicator');
+            if (!dot || !lbl) return;
+            if (GS_URL) {
+                dot.className = 'sync-dot synced';
+                lbl.textContent = 'Sheets Connected';
+                if (ind) ind.style.display = 'inline-flex';
+            } else {
+                dot.className = 'sync-dot';
+                lbl.textContent = 'Not Connected';
+                if (ind) ind.style.display = 'none';
+            }
+        }
+
+        function openGSModal() {
+            document.getElementById('gsUrlInput').value = GS_URL;
+            document.getElementById('gsStatus').className = 'gs-status';
+            document.getElementById('gsStatus').textContent = '';
+            document.getElementById('gsModalOverlay').classList.add('on');
+        }
+
+        function closeGSModal() {
+            document.getElementById('gsModalOverlay').classList.remove('on');
+        }
+
+        function setGSStatus(msg, type) {
+            const el = document.getElementById('gsStatus');
+            el.textContent = msg;
+            el.className = 'gs-status ' + type;
+        }
+
+        async function testGSConnection() {
+            const url = document.getElementById('gsUrlInput').value.trim();
+            if (!url) { setGSStatus('❗ Please enter the URL first', 'err'); return; }
+            setGSStatus('🔄 Testing connection...', 'inf');
+            try {
+                const res = await fetch(url + '?action=ping', { method: 'GET' });
+                const txt = await res.text();
+                if (txt.includes('NTPC_OK')) {
+                    setGSStatus('✅ Connection Successful!', 'ok');
+                } else {
+                    setGSStatus('⚠️ Response unexpected: ' + txt.slice(0, 80), 'err');
+                }
+            } catch (e) {
+                setGSStatus('❌ Connection failed: ' + e.message, 'err');
+            }
+        }
+
+        function saveGSUrl() {
+            const url = document.getElementById('gsUrlInput').value.trim();
+            if (!url) { setGSStatus('❗ Please enter the URL', 'err'); return; }
+            GS_URL = url;
+            localStorage.setItem('ntpc_gs_url', GS_URL);
+            updateSyncUI();
+            setGSStatus('✅ URL saved! You can now Upload / Download data.', 'ok');
+        }
+
+        // ── SILENT AUTO-UPLOAD (runs automatically after every save/edit/delete) ──
+        async function autoSyncToSheets() {
+            if (!GS_URL) return;
+            const dot = document.getElementById('syncDot');
+            if (dot) dot.className = 'sync-dot syncing';
+
+            const rows = [];
+            DB.forEach(entry => {
+                entry.tasks.forEach(t => {
+                    rows.push({
+                        date:        entry.date,
+                        reportNo:    t.reportNo    || entry.reportNo || '',
+                        section:     t.section     || entry.section  || '',
+                        name:        t.name        || '',
+                        designation: t.designation || '',
+                        area:        t.area        || '',
+                        category:    t.category    || '',
+                        status:      t.status      || 'Completed',
+                        taskDate:    t.taskDate    || entry.date,
+                        title:       t.title       || '',
+                        detail:      t.detail      || '',
+                        savedAt:     entry.savedAt || ''
+                    });
+                });
+            });
+
+            try {
+                const res = await fetch(GS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ action: 'upload', rows })
+                });
+                const txt = await res.text();
+                if (dot) dot.className = txt.includes('SUCCESS') ? 'sync-dot synced' : 'sync-dot error';
+            } catch (e) {
+                if (dot) dot.className = 'sync-dot error';
+            }
+        }
+
+        // ── SILENT AUTO-DOWNLOAD (runs once on page load so every visitor sees shared data) ──
+        async function autoLoadFromSheets() {
+            if (!GS_URL) return;
+            const dot = document.getElementById('syncDot');
+            if (dot) dot.className = 'sync-dot syncing';
+
+            try {
+                const res = await fetch(GS_URL + '?action=download');
+                const txt = await res.text();
+                let rows;
+                try { rows = JSON.parse(txt); } catch (pe) {
+                    if (dot) dot.className = 'sync-dot error';
+                    return;
+                }
+                if (!Array.isArray(rows) || !rows.length) {
+                    if (dot) dot.className = 'sync-dot synced';
+                    return;
+                }
+
+                const map = {};
+                rows.forEach(r => {
+                    const d = r.date || '';
+                    if (!d) return;
+                    if (!map[d]) {
+                        map[d] = { date: d, reportNo: r.reportNo || '', section: r.section || '', tasks: [], savedAt: r.savedAt || new Date().toISOString() };
+                    }
+                    map[d].tasks.push({
+                        name:        r.name        || '',
+                        designation: r.designation || '',
+                        section:     r.section     || '',
+                        area:        r.area        || '',
+                        reportNo:    r.reportNo    || '',
+                        category:    r.category    || '',
+                        status:      r.status      || 'Completed',
+                        taskDate:    r.taskDate    || d,
+                        title:       r.title       || '',
+                        detail:      r.detail      || ''
+                    });
+                });
+
+                DB = Object.values(map).sort((a, b) => new Date(b.date) - new Date(a.date));
+                localStorage.setItem('ntpc_emd_v2', JSON.stringify(DB)); // refresh local cache, no re-upload triggered
+                renderDash();
+                if (dot) dot.className = 'sync-dot synced';
+            } catch (e) {
+                if (dot) dot.className = 'sync-dot error';
+            }
+        }
+
+        // ── UPLOAD LOCAL → SHEETS (manual button, still available) ──
+        async function syncToSheets() {
+            if (!GS_URL) { openGSModal(); setGSStatus('❗ Please save the URL first', 'err'); return; }
+            if (!DB.length) { openGSModal(); setGSStatus('❗ No local data found to upload', 'err'); return; }
+
+            const dot = document.getElementById('syncDot');
+            dot.className = 'sync-dot syncing';
+            setGSStatus('🔄 Uploading data to Google Sheets...', 'inf');
+
+            const rows = [];
+            DB.forEach(entry => {
+                entry.tasks.forEach(t => {
+                    rows.push({
+                        date:        entry.date,
+                        reportNo:    t.reportNo    || entry.reportNo || '',
+                        section:     t.section     || entry.section  || '',
+                        name:        t.name        || '',
+                        designation: t.designation || '',
+                        area:        t.area        || '',
+                        category:    t.category    || '',
+                        status:      t.status      || 'Completed',
+                        taskDate:    t.taskDate    || entry.date,
+                        title:       t.title       || '',
+                        detail:      t.detail      || '',
+                        savedAt:     entry.savedAt || ''
+                    });
+                });
+            });
+
+            try {
+                const res = await fetch(GS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ action: 'upload', rows })
+                });
+                const txt = await res.text();
+                if (txt.includes('SUCCESS')) {
+                    setGSStatus('✅ ' + rows.length + ' rows uploaded to Google Sheets!', 'ok');
+                    dot.className = 'sync-dot synced';
+                    toast('✅ Google Sheets sync complete!');
+                } else {
+                    setGSStatus('⚠️ Server response: ' + txt.slice(0, 120), 'err');
+                    dot.className = 'sync-dot error';
+                }
+            } catch (e) {
+                setGSStatus('❌ Upload failed: ' + e.message, 'err');
+                dot.className = 'sync-dot error';
+            }
+        }
+
+        // ── DOWNLOAD SHEETS → LOCAL ──
+        async function syncFromSheets() {
+            if (!GS_URL) { openGSModal(); setGSStatus('❗ Please save the URL first', 'err'); return; }
+
+            const dot = document.getElementById('syncDot');
+            dot.className = 'sync-dot syncing';
+            setGSStatus('🔄 Downloading data from Google Sheets...', 'inf');
+
+            try {
+                const res = await fetch(GS_URL + '?action=download');
+                const txt = await res.text();
+                let rows;
+                try {
+                    rows = JSON.parse(txt);
+                } catch(pe) {
+                    setGSStatus('❌ Invalid JSON from server: ' + txt.slice(0, 80), 'err');
+                    dot.className = 'sync-dot error';
+                    return;
+                }
+
+                if (!Array.isArray(rows) || !rows.length) {
+                    setGSStatus('⚠️ No data found in Sheet', 'err');
+                    dot.className = 'sync-dot error';
+                    return;
+                }
+
+                const map = {};
+                rows.forEach(r => {
+                    const d = r.date || '';
+                    if (!d) return;
+                    if (!map[d]) {
+                        map[d] = { date: d, reportNo: r.reportNo || '', section: r.section || '', tasks: [], savedAt: r.savedAt || new Date().toISOString() };
+                    }
+                    map[d].tasks.push({
+                        name:        r.name        || '',
+                        designation: r.designation || '',
+                        section:     r.section     || '',
+                        area:        r.area        || '',
+                        reportNo:    r.reportNo    || '',
+                        category:    r.category    || '',
+                        status:      r.status      || 'Completed',
+                        taskDate:    r.taskDate    || d,
+                        title:       r.title       || '',
+                        detail:      r.detail      || ''
+                    });
+                });
+
+                const newDB = Object.values(map).sort((a, b) => new Date(b.date) - new Date(a.date));
+                if (!confirm('📥 ' + rows.length + ' rows found in Sheet.\n' + newDB.length + ' days of data will be saved locally.\n\nProceed?')) {
+                    setGSStatus('❌ Download cancelled', 'err');
+                    dot.className = 'sync-dot synced';
+                    return;
+                }
+
+                DB = newDB;
+                persist();
+                renderDash();
+                dot.className = 'sync-dot synced';
+                setGSStatus('✅ ' + rows.length + ' rows downloaded! ' + newDB.length + ' days saved locally.', 'ok');
+                toast('✅ Data downloaded from Google Sheets!');
+            } catch(e) {
+                setGSStatus('❌ Download failed: ' + e.message, 'err');
+                dot.className = 'sync-dot error';
+            }
+        }
+
+        // ── AUTO SYNC TO SHEETS (background, silent) ──
+        async function autoSyncToSheets() {
+            if (!GS_URL) return;
+            const dot = document.getElementById('syncDot');
+            const lbl = document.getElementById('syncLabel');
+            dot.className = 'sync-dot syncing';
+            const rows = [];
+            DB.forEach(entry => {
+                entry.tasks.forEach(t => {
+                    rows.push({
+                        date:        entry.date,
+                        reportNo:    t.reportNo    || entry.reportNo || '',
+                        section:     t.section     || entry.section  || '',
+                        name:        t.name        || '',
+                        designation: t.designation || '',
+                        area:        t.area        || '',
+                        category:    t.category    || '',
+                        status:      t.status      || 'Completed',
+                        taskDate:    t.taskDate    || entry.date,
+                        title:       t.title       || '',
+                        detail:      t.detail      || '',
+                        savedAt:     entry.savedAt || ''
+                    });
+                });
+            });
+            try {
+                const res = await fetch(GS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ action: 'upload', rows })
+                });
+                const txt = await res.text();
+                if (txt.includes('SUCCESS')) {
+                    dot.className = 'sync-dot synced';
+                    lbl.textContent = 'Synced ✓';
+                    setTimeout(() => { if (lbl) lbl.textContent = 'Sheets Connected'; }, 3000);
+                } else {
+                    dot.className = 'sync-dot error';
+                    lbl.textContent = 'Sync Failed!';
+                }
+            } catch(e) {
+                dot.className = 'sync-dot error';
+                lbl.textContent = 'Sync Failed!';
+            }
+        }
+
+        // ── MONTH / RANGE LEVEL ACTIONS ──
+        function viewMonthReport(key) {
+            const [yr, mo] = key.split('-');
+            const monthName = new Date(yr, mo - 1, 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+            const entries = DB.filter(r => r.date.startsWith(key)).sort((a, b) => new Date(a.date) - new Date(b.date));
+            if (!entries.length) { toast('No entries found for this month', true); return; }
+
+            let allRows = '';
+            let sno = 1;
+            entries.forEach(r => {
+                r.tasks.forEach((t, i) => {
+                    allRows += `<tr>
+                            <td style="text-align:center">${sno++}</td>
+                            <td>${i===0?'<strong>'+fmtDate(r.date)+'</strong>':''}</td>
+                            <td>${t.name}</td>
+                            <td>${t.designation||'—'}</td>
+                            <td>${t.section||r.section||'—'}</td>
+                            <td>${t.area||'—'}</td>
+                            <td>${t.reportNo||r.reportNo||'—'}</td>
+                            <td>${t.category||'—'}</td>
+                            <td><strong>${t.status}</strong></td>
+                            <td>${fmtDate(t.taskDate||r.date)}</td>
+                            <td><strong>${t.title}</strong></td>
+                            <td style="white-space:pre-wrap;word-break:break-word">${t.detail}</td>
+                          </tr>`;
+                });
+            });
+
+            const win = window.open('', '_blank');
+            win.document.write(`<!DOCTYPE html><html><head>
+                  <meta charset="UTF-8"><title>NTPC EMD – ${monthName}</title>
+                  <style>
+                    *{margin:0;padding:0;box-sizing:border-box;}
+                    body{font-family:Arial,sans-serif;padding:20px 26px;color:#000;font-size:11.5px;}
+                    .ph{text-align:center;margin-bottom:18px;padding-bottom:12px;border-bottom:3px solid #003366;}
+                    .ph h1{color:#003366;font-size:19px;margin-bottom:3px;}
+                    .ph h2{color:#E8620A;font-size:13px;margin-bottom:6px;}
+                    .ph p{font-size:12px;color:#444;}
+                    table{width:100%;border-collapse:collapse;margin-top:12px;}
+                    th{background:#003366;color:#fff;padding:8px 9px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;}
+                    td{padding:8px 9px;border:1px solid #ccc;vertical-align:top;line-height:1.45;word-wrap:break-word;overflow-wrap:break-word;word-break:break-word;}
+                    tr:nth-child(even) td{background:#F5F8FC;}
+                    .ft{margin-top:28px;display:flex;justify-content:space-between;}
+                    .sig{border-top:1px solid #000;padding-top:5px;width:150px;text-align:center;font-size:11px;}
+                    .gen{margin-top:20px;text-align:center;font-size:10px;color:#888;}
+                  </style></head><body>
+                  <div class="ph">
+                    <h1>⚡ NTPC – Electrical Maintenance Department</h1>
+                    <h2>Monthly Work Report — ${monthName}</h2>
+                    <p>Total Days: ${entries.length} &nbsp;|&nbsp; Total Tasks: ${entries.reduce((s,r)=>s+r.tasks.length,0)}</p>
+                  </div>
+                  <table>
+                    <thead><tr>
+                      <th>S.No</th><th>Date</th><th>Electrician Name</th><th>Designation</th>
+                      <th>Section</th><th>Area</th><th>Report No</th><th>Category</th>
+                      <th>Status</th><th>Task Date</th><th>Work Title</th><th>Work Detail</th>
+                    </tr></thead>
+                    <tbody>${allRows}</tbody>
+                  </table>
+                  <div class="ft">
+                    <div><div class="sig">Prepared by</div></div>
+                    <div><div class="sig">Checked by</div></div>
+                    <div><div class="sig">Approved by</div></div>
+                  </div>
+                  <div class="gen">Generated by NTPC EMD Report System &nbsp;|&nbsp; ${new Date().toLocaleString('en-IN')}</div>
+                  </body></html>`);
+            win.document.close();
+        }
+
+        function editMonthEntries(key) {
+            const [yr, mo] = key.split('-');
+            const monthName = new Date(yr, mo - 1, 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+            goPage('dashboard');
+            setTimeout(() => {
+                const entries = DB.filter(r => r.date.startsWith(key));
+                document.getElementById('dsInfo').innerHTML =
+                    `<span style="color:var(--blue);font-weight:600">✏ ${monthName} — ${entries.length} Days (Click Edit on any day card to make changes)</span> &nbsp;<button class="btn btn-sm btn-out" onclick="dashClear()">✕ Clear</button>`;
+                renderCards(entries);
+                document.getElementById('dashContent').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        function viewRangeReport(from, to) {
+            const entries = DB.filter(r => r.date >= from && r.date <= to)
+                               .sort((a, b) => new Date(a.date) - new Date(b.date));
+            if (!entries.length) { toast('No entries found for this range', true); return; }
+
+            let allRows = '';
+            let sno = 1;
+            entries.forEach(r => {
+                r.tasks.forEach((t, i) => {
+                    allRows += `<tr>
+                            <td style="text-align:center">${sno++}</td>
+                            <td>${i===0?'<strong>'+fmtDate(r.date)+'</strong>':''}</td>
+                            <td>${t.name}</td>
+                            <td>${t.designation||'—'}</td>
+                            <td>${t.section||r.section||'—'}</td>
+                            <td>${t.area||'—'}</td>
+                            <td>${t.reportNo||r.reportNo||'—'}</td>
+                            <td>${t.category||'—'}</td>
+                            <td><strong>${t.status}</strong></td>
+                            <td>${fmtDate(t.taskDate||r.date)}</td>
+                            <td><strong>${t.title}</strong></td>
+                            <td style="white-space:pre-wrap;word-break:break-word">${t.detail}</td>
+                          </tr>`;
+                });
+            });
+
+            const win = window.open('', '_blank');
+            win.document.write(`<!DOCTYPE html><html><head>
+                  <meta charset="UTF-8"><title>NTPC EMD – ${fmtDate(from)} to ${fmtDate(to)}</title>
+                  <style>
+                    *{margin:0;padding:0;box-sizing:border-box;}
+                    body{font-family:Arial,sans-serif;padding:20px 26px;color:#000;font-size:11.5px;}
+                    .ph{text-align:center;margin-bottom:18px;padding-bottom:12px;border-bottom:3px solid #003366;}
+                    .ph h1{color:#003366;font-size:19px;margin-bottom:3px;}
+                    .ph h2{color:#E8620A;font-size:13px;margin-bottom:6px;}
+                    .ph p{font-size:12px;color:#444;}
+                    table{width:100%;border-collapse:collapse;margin-top:12px;}
+                    th{background:#003366;color:#fff;padding:8px 9px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;}
+                    td{padding:8px 9px;border:1px solid #ccc;vertical-align:top;line-height:1.45;word-wrap:break-word;overflow-wrap:break-word;word-break:break-word;}
+                    tr:nth-child(even) td{background:#F5F8FC;}
+                    .ft{margin-top:28px;display:flex;justify-content:space-between;}
+                    .sig{border-top:1px solid #000;padding-top:5px;width:150px;text-align:center;font-size:11px;}
+                    .gen{margin-top:20px;text-align:center;font-size:10px;color:#888;}
+                  </style></head><body>
+                  <div class="ph">
+                    <h1>⚡ NTPC – Electrical Maintenance Department</h1>
+                    <h2>Work Report — ${fmtDate(from)} to ${fmtDate(to)}</h2>
+                    <p>Total Days: ${entries.length} &nbsp;|&nbsp; Total Tasks: ${entries.reduce((s,r)=>s+r.tasks.length,0)}</p>
+                  </div>
+                  <table>
+                    <thead><tr>
+                      <th>S.No</th><th>Date</th><th>Electrician Name</th><th>Designation</th>
+                      <th>Section</th><th>Area</th><th>Report No</th><th>Category</th>
+                      <th>Status</th><th>Task Date</th><th>Work Title</th><th>Work Detail</th>
+                    </tr></thead>
+                    <tbody>${allRows}</tbody>
+                  </table>
+                  <div class="ft">
+                    <div><div class="sig">Prepared by</div></div>
+                    <div><div class="sig">Checked by</div></div>
+                    <div><div class="sig">Approved by</div></div>
+                  </div>
+                  <div class="gen">Generated by NTPC EMD Report System &nbsp;|&nbsp; ${new Date().toLocaleString('en-IN')}</div>
+                  </body></html>`);
+            win.document.close();
+        }
+
+        function editRangeEntries(from, to) {
+            goPage('dashboard');
+            setTimeout(() => {
+                const entries = DB.filter(r => r.date >= from && r.date <= to);
+                document.getElementById('dsInfo').innerHTML =
+                    `<span style="color:var(--blue);font-weight:600">✏ ${fmtDate(from)} → ${fmtDate(to)} — ${entries.length} Days (Click Edit on any day card to make changes)</span> &nbsp;<button class="btn btn-sm btn-out" onclick="dashClear()">✕ Clear</button>`;
+                renderCards(entries);
+                document.getElementById('dashContent').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        // ── INIT ──
+        setHdrDate();
+        updateSyncUI();
+        renderDash();   // show locally cached data instantly
+        initForm();
+        autoLoadFromSheets(); // then silently refresh with the latest shared data from Google Sheet
+
+        // Close modal on overlay click
+        document.getElementById('gsModalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeGSModal();
+        });
+
+    </script>
+</body>
+</html>
